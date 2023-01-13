@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const userSchema = new mongoose.Schema({
     fname : {
@@ -12,7 +13,7 @@ const userSchema = new mongoose.Schema({
     email : {
         type : String,
         required : true,
-        // unique : true
+        unique : true
     },
     password : {
         type : String,
@@ -21,6 +22,10 @@ const userSchema = new mongoose.Schema({
     phone : {
         type : String,
         required : true
+    },
+    isAdmin : {
+        type : Boolean,
+        default : false
     }
 });
 

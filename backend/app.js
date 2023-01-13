@@ -10,8 +10,10 @@ app.use(express.urlencoded({
 app.use(cors());
 
 // routes
-const userRoute = require('./routes/userRoutes');
+const userRoute = require('./routes/userRouter');
+const loginRoute = require('./routes/loginRouter');
 
 app.use('/api/user', userRoute);
+app.use('/api/user', loginRoute);
 
 module.exports = app;
