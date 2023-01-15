@@ -1,3 +1,4 @@
+const dotenv = require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
@@ -6,29 +7,31 @@ const saltRounds = 10;
 const addUser = async (req, res) => {
     try {
         const { fname, lname, email, password, phone } = req.body;
-        const hash = bcrypt.hashSync(password, saltRounds);
-        userModel.create({
+        const user = await userModel.findOne({ email });
+        if (user) {
+            return res.status(400).send({
+                'statusCode': 400,
+                'err': 'user email already exist'
+            })
+        }
+        const newUser = new userModel({
             fname: fname,
             lname: lname,
             email: email,
-            password: hash,
+            password: password,
             phone: phone
-        }).then(data => {
-            res.status(201).send({      // created
-                'message': 'user registered successfully',
-                'statusCode': 201,
-                data
-            });
-        }).catch(err => res.status(400).json({
-            'err': 'Something went wrong, please try again',
-            'status': 400
-        }));
+        });
+
+        const userRegistered = await newUser.save();
+
+        res.status(201).send({
+            "statusCode": 201,
+            "msg": "user registered successfully",
+            "data": userRegistered
+        })
     }
     catch (err) {
-        res.status(400).json({
-            'err': 'something went wrong, please try again',
-            'statusCode': 400
-        })
+        res.status(400).send({ 'status': 400, 'err': 'Something went wrong' });
     }
 }
 
@@ -80,14 +83,6 @@ const getUserById = async (req, res) => {
 const editUser = async (req, res) => {
     try {
         const id = req.params.id;
-        const user = await userModel.findById(id);
-        if (!user) {
-            res.status(400).send({
-                'err': `User with id ${user} not found`,
-                'statusCode': 400
-            })
-        }
-
         const { fname, lname, email, password, phone } = req.body;
         const hash = bcrypt.hashSync(password, saltRounds);
         await userModel.findByIdAndUpdate(id, { fname: fname, lname: lname, email: email, password: hash, phone: phone })
@@ -134,4 +129,60 @@ const deleteUser = async (req, res) => {
     }
 }
 
-module.exports = { addUser, getUsers, getUserById, editUser, deleteUser };
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await userModel.findOne({ email });
+        if (user) {
+            if (bcrypt.compare(password, user.password)) {
+                const token = await user.generateUserToken();
+                res.cookie('_token', token);
+                res.status(200).send({
+                    'statusCode': 200,
+                    'msg': 'user logged-In successfully',
+                    'data': user,
+                    'token': token
+                })
+            }
+            else {
+                res.status(400).send({
+                    'statusCode': 400,
+                    'err': 'incorrect email & password'
+                })
+            }
+        }
+        else {
+            res.status(400).send({
+                'statusCode': 400,
+                'err': 'invalid email and password'
+            })
+        }
+    }
+    catch (err) {
+        res.status(400).send({ 'status': 400, 'err': 'Internal Server Error' });
+    }
+}
+
+const logout = async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter((token => {
+            return token.token !== req.token;
+        }))
+
+        res.clearCookie('_token');
+        await req.user.save();
+        res.status(200).send({
+            'statusCode': 200,
+            'msg': 'Logout Successfully'
+        });
+    }
+    catch (err) {
+        res.status(500)
+            .send({
+                'statusCode': 500,
+                'err': 'Internal Server Error'
+            })
+    }
+}
+
+module.exports = { addUser, getUsers, getUserById, editUser, deleteUser, login, logout };
