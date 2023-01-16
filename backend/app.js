@@ -13,7 +13,9 @@ app.use(cookieParser());
 
 // routes
 const userRoute = require('./routes/authRouter');
+const tradeapiRoute = require('./routes/trade.api.router');
 
 app.use('/api/user', userRoute);
+app.use('/api/trade', tradeapiRoute);
 
 module.exports = app;
