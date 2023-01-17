@@ -1,8 +1,11 @@
-const { getGoldData, getSilverData } = require('../controllers/tradeController');
+const { postGoldData, postSilverData, getSilverApi, getGoldApi } = require('../controllers/tradeController');
 
 const router = require('express').Router();
 
-router.get('/getgoldinfo', getGoldData);
-router.get('/getsilverinfo', getSilverData);
+// router.post('/postgolddata', postGoldData);
+// router.post('/postsilverdata', postSilverData);
+
+router.get('/get-gold-data', getGoldApi);
+router.get('/get-silver-data', getSilverApi);
 
 module.exports = router;

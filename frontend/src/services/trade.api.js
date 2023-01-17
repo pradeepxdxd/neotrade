@@ -2,8 +2,12 @@ import axios from 'axios';
 
 const API = 'http://localhost:3002/api/trade';
 
-const getGoldInfo = () => {
-    return axios.get(`${API}/getgoldinfo`);
+const getGoldData = () => {
+    return axios.get(`${API}/get-gold-data`)
 }
 
-export { getGoldInfo }
+const getSilverData = () => {
+    return axios.get(`${API}/get-silver-data`)
+}
+
+export { getGoldData, getSilverData }
