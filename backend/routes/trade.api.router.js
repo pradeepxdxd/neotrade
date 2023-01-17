@@ -1,4 +1,4 @@
-const { postGoldData, postSilverData, getSilverApi, getGoldApi } = require('../controllers/tradeController');
+const { postGoldData, postSilverData, getSilverApi, getGoldApi, getGoldDataByDay, getSilverDataByDay } = require('../controllers/tradeController');
 
 const router = require('express').Router();
 
@@ -6,6 +6,11 @@ const router = require('express').Router();
 // router.post('/postsilverdata', postSilverData);
 
 router.get('/get-gold-data', getGoldApi);
+
 router.get('/get-silver-data', getSilverApi);
+
+router.get('/get-gold-data-by-day/:day', getGoldDataByDay);
+
+router.get('/get-silver-data-by-day/:day', getSilverDataByDay);
 
 module.exports = router;
