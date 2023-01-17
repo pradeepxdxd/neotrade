@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { getGoldData } from '../services/trade.api';
+import { getSilverData } from '../services/trade.api';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, LineElement, CategoryScale, LinearScale, PointElement, Legend } from 'chart.js';
 
-export default function OneMonthGoldChart() {
+export default function OneMonthSilverChart() {
 
     const allMonth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -18,7 +18,7 @@ export default function OneMonthGoldChart() {
     const getMonth = allMonth[new Date().getMonth()];
 
     useEffect(() => {
-        getGoldData()
+        getSilverData()
             .then(result => {
                 setGoldData(result.data.data[0])
             })
@@ -52,7 +52,7 @@ export default function OneMonthGoldChart() {
         labels: date,
         datasets: [
             {
-                label: 'Gold Price',
+                label: 'Silver Price',
                 data: price,
                 backgroundColor: 'red',
                 borderColor: 'gray',
@@ -79,7 +79,7 @@ export default function OneMonthGoldChart() {
 
     return (
         <>
-            <div style={{width:'1300px', height:'700px'}}>
+            <div style={{width:'1300px', height:'1000px'}}>
                 <Line data={data} options={options} />
             </div>
         </>

@@ -6,17 +6,18 @@ import { getGoldData } from "./services/trade.api";
 import SilverChart from "./components/SilverChart";
 import LastMonthChart from "./components/LastMonthChart";
 import OneMonthGoldChart from "./components/OneMonthGoldChart";
+import OneMonthSilverChart from "./components/OneMonthSilverChart";
 
 const App = () => {
   return (
     <>
-      {/* <Counter/>
-      <Register/> */}
-      <GoldChart/>
-      <br/>
-      <SilverChart/>
-      <br/>
-      <OneMonthGoldChart/>
+      <GoldChart />
+      <br />
+      <SilverChart />
+      <br />
+      <OneMonthGoldChart />
+      <br />
+      <OneMonthSilverChart />
     </>
   );
 }
