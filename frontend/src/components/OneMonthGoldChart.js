@@ -2,8 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { getGoldData } from '../services/trade.api';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, LineElement, CategoryScale, LinearScale, PointElement, Legend } from 'chart.js';
+import Dropdown from 'react-bootstrap/Dropdown';
+import { Link } from 'react-router-dom';
+
+ChartJS.register({
+    Title, Tooltip, LineElement, CategoryScale, LinearScale, PointElement, Legend
+})
 
 export default function OneMonthGoldChart() {
+
+    const [param, setParam] = useState(null);
 
     const allMonth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -13,9 +21,18 @@ export default function OneMonthGoldChart() {
     const [goldData, setGoldData] = useState([]);
     const [monthData, setMonthData] = useState([]);
 
-    const month = new Date().getMonth() + 1;
+    let month;
+    let getMonth;
 
-    const getMonth = allMonth[new Date().getMonth()];
+    if (param == null) {
+        month = new Date().getMonth() + 1;
+        getMonth = allMonth[new Date().getMonth()];
+    }
+    else {
+        month = param
+        getMonth = allMonth[param];
+    }
+
 
     useEffect(() => {
         getGoldData()
@@ -46,7 +63,7 @@ export default function OneMonthGoldChart() {
         setDate(tempDate);
         setPrice(tempPrice);
 
-    }, [goldData]);
+    }, [goldData, param]);
 
     const data = {
         labels: date,
@@ -77,9 +94,36 @@ export default function OneMonthGoldChart() {
         }
     }
 
+    const handleDay = (value) => {
+        setParam(value);
+    }
+
+    console.log(param);
+
     return (
         <>
-            <div style={{width:'1300px', height:'700px'}}>
+            <Dropdown>
+                <Dropdown.Toggle variant="info" id="dropdown-basic">
+                    Month
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                    <Dropdown.Item onClick={() => handleDay(0)}>Jan</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDay(1)}>Feb</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDay(2)}>Mar</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDay(3)}>Apr</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDay(4)}>May</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDay(5)}>Jun</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDay(6)}>Jul</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDay(7)}>Aug</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDay(8)}>Sep</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDay(9)}>Oct</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDay(10)}>Nov</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDay(11)}>Dec</Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown>
+            
+            <div style={{ width: '1300px', height: '700px' }}>
                 <Line data={data} options={options} />
             </div>
         </>

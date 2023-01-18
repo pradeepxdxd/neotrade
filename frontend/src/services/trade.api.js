@@ -10,4 +10,8 @@ const getSilverData = () => {
     return axios.get(`${API}/get-silver-data`)
 }
 
+// const getGoldDataByMonth = (day) => {
+//     return axios.get(`${API}/get-gold-data-by-day/${day}`);
+// }
+
 export { getGoldData, getSilverData }
