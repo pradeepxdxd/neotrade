@@ -1,8 +1,21 @@
-const dotenv = require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
+const transporter = require('../mails/nodemailer');
 const saltRounds = 10;
+
+const deleteAllUsers = async (req, res) => {
+    try{
+        await userModel.remove()
+            .then(data => {
+                res.status(200).send('all the users are deleted...')
+            })
+            .catch(err => res.status(400).then('something went wrong'));
+    }
+    catch(err){
+        res.status(500).send('Internal server error');
+    }
+}
 
 const addUser = async (req, res) => {
     try {
@@ -185,4 +198,87 @@ const logout = async (req, res) => {
     }
 }
 
-module.exports = { addUser, getUsers, getUserById, editUser, deleteUser, login, logout };
+const sendpasswordlink = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(401).send({
+                'statusCode': 401,
+                'err': 'Enter your email address',
+            })
+        }
+
+        const userEmail = await userModel.findOne({ email });
+
+        if (userEmail) {
+            const token = jwt.sign({ _id: userEmail._id }, process.env.SECRET_KEY, { expiresIn: "120s" });
+            const setUserToken = await userModel.findByIdAndUpdate({ _id: userEmail._id }, { verifytoken: token }, { new: true });
+
+
+            if (setUserToken) {
+                const mailOptions = {
+                    from: process.env.EMAIL,
+                    to: email,
+                    subject: "Sending Email For password Reset",
+                    text: `This Link Valid For 2 MINUTES http://localhost:3002/forgotpassword/${userEmail.id}/${setUserToken.verifytoken}`
+                }
+
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.log("error", error);
+                        res.status(401).json({ status: 401, message: "email not send" })
+                    } else {
+                        console.log("Email sent", info.response);
+                        res.status(201).json({ status: 201, message: "Email sent Succsfully" })
+                    }
+                })
+
+            }
+            else {
+                res.status(200).send({
+                    'statusCode': 200,
+                    'msg': 'sending login mail',
+                    userEmail,
+                    'token': token
+                })
+            }
+        }
+        else {
+            res.status(404).send({
+                'statusCode': 404,
+                'err': 'user not found',
+            })
+        }
+    }
+    catch (err) {
+        res.status(500).send({
+            'statusCode': 500,
+            'err': 'Internal server error'
+        })
+    }
+
+}
+
+const forgotPassword = async (req, res) => {
+    const { id, token } = req.params;
+
+    try {
+        const validuser = await userModel.findOne({ _id: id, verifytoken: token });
+
+        const verifyToken = jwt.verify(token, process.env.SECRET_KEY);
+
+        console.log(verifyToken)
+
+        if (validuser && verifyToken._id) {
+            res.status(201).json({ status: 201, validuser })
+        } else {
+            res.status(401).json({ status: 401, message: "user not exist" })
+        }
+
+    } catch (error) {
+        res.status(401).json({ status: 401, error })
+    }
+}
+
+module.exports = { addUser, getUsers, getUserById, editUser, deleteUser, login, logout, sendpasswordlink, forgotPassword, deleteAllUsers };

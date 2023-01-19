@@ -7,17 +7,20 @@ import SilverChart from "./components/SilverChart";
 import LastMonthChart from "./components/LastMonthChart";
 import OneMonthGoldChart from "./components/OneMonthGoldChart";
 import OneMonthSilverChart from "./components/OneMonthSilverChart";
+import CurrentMarketPriceOfGold from "./components/CurrentMarketPriceOfGold";
 
 const App = () => {
   return (
     <>
-      <GoldChart />
+      {/* <GoldChart />
       <br />
       <SilverChart />
       <br />
       <OneMonthGoldChart />
       <br />
-      <OneMonthSilverChart />
+      <OneMonthSilverChart /> */}
+
+      <CurrentMarketPriceOfGold/>
     </>
   );
 }

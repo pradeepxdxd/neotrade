@@ -966,7 +966,7 @@ exports.getSilverDataByDay = async (req, res) => {
     try {
         const day = req.params.day;
         const silverData = await silverModel.find();
-        console.log(silverData[0].Jan);
+        // console.log(silverData[0].Jan);
         if (day == 0) {
             res.status(200).send({
                 'statusCode': 200,
