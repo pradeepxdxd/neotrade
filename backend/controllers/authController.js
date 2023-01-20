@@ -5,14 +5,14 @@ const transporter = require('../mails/nodemailer');
 const saltRounds = 10;
 
 const deleteAllUsers = async (req, res) => {
-    try{
+    try {
         await userModel.remove()
             .then(data => {
                 res.status(200).send('all the users are deleted...')
             })
             .catch(err => res.status(400).then('something went wrong'));
     }
-    catch(err){
+    catch (err) {
         res.status(500).send('Internal server error');
     }
 }
@@ -147,7 +147,8 @@ const login = async (req, res) => {
         const { email, password } = req.body;
         const user = await userModel.findOne({ email });
         if (user) {
-            if (bcrypt.compare(password, user.password)) {
+            const verify = await bcrypt.compareSync(password, user.password);
+            if (verify) {
                 const token = await user.generateUserToken();
                 res.cookie('_token', token);
                 res.status(200).send({
@@ -221,7 +222,7 @@ const sendpasswordlink = async (req, res) => {
                     from: process.env.EMAIL,
                     to: email,
                     subject: "Sending Email For password Reset",
-                    text: `This Link Valid For 2 MINUTES http://localhost:3002/forgotpassword/${userEmail.id}/${setUserToken.verifytoken}`
+                    text: `This Link Valid For 2 MINUTES http://localhost:3000/changepassword/${userEmail.id}/${setUserToken.verifytoken}`
                 }
 
                 transporter.sendMail(mailOptions, (error, info) => {
@@ -268,12 +269,17 @@ const forgotPassword = async (req, res) => {
 
         const verifyToken = jwt.verify(token, process.env.SECRET_KEY);
 
-        console.log(verifyToken)
-
         if (validuser && verifyToken._id) {
-            res.status(201).json({ status: 201, validuser })
-        } else {
-            res.status(401).json({ status: 401, message: "user not exist" })
+            res.status(201).send({
+                'statusCode': 201,
+                'msg': 'user can change password'
+            })
+        }
+        else {
+            res.status(401).send({
+                'statusCode': 401,
+                'msg': "user not exist"
+            })
         }
 
     } catch (error) {
@@ -281,4 +287,54 @@ const forgotPassword = async (req, res) => {
     }
 }
 
-module.exports = { addUser, getUsers, getUserById, editUser, deleteUser, login, logout, sendpasswordlink, forgotPassword, deleteAllUsers };
+const changePassword = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { password } = req.body;
+
+        const user = await userModel.findById(id);
+
+        if (!user) {
+            return res.status(401).send({
+                'statusCode': 401,
+                'err': 'user not found'
+            })
+        }
+
+        const token = user.verifytoken;
+
+        const validUser = jwt.verify(token, process.env.SECRET_KEY);
+
+        if (validUser) {
+            const newpassword = bcrypt.hashSync(password, saltRounds);
+            await userModel.findByIdAndUpdate({ _id: id }, { password: newpassword })
+                .then(data => {
+                    res.status(200).send({
+                        'statusCode': 200,
+                        'msg': 'user password updated',
+                        data
+                    })
+                }).catch(err => {
+                    res.status(400).send({
+                        'statusCode': 400,
+                        'err': 'user not exist'
+                    })
+                })
+        }
+        else {
+            return res.status(400).send({
+                'statusCode': 400,
+                'err': 'invalid jwt token'
+            })
+        }
+
+    }
+    catch (err) {
+        res.status(500).send({
+            'statusCode': 500,
+            'err': 'Internal server error'
+        })
+    }
+}
+
+module.exports = { addUser, getUsers, getUserById, editUser, deleteUser, login, logout, sendpasswordlink, forgotPassword, deleteAllUsers, changePassword };

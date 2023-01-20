@@ -62,7 +62,7 @@ const auth = async (req, res, next) => {
     }
 }
 
-const authForgotPass = async (req, res, next) => {
+const authPass = async (req, res, next) => {
     try {
 
         const id = req.params.id;
@@ -97,4 +97,4 @@ const authForgotPass = async (req, res, next) => {
     }
 }
 
-module.exports = { auth, authLogout, authForgotPass }
+module.exports = { auth, authLogout, authPass }

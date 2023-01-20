@@ -8,6 +8,9 @@ import LastMonthChart from "./components/LastMonthChart";
 import OneMonthGoldChart from "./components/OneMonthGoldChart";
 import OneMonthSilverChart from "./components/OneMonthSilverChart";
 import CurrentMarketPriceOfGold from "./components/CurrentMarketPriceOfGold";
+import ForgetPassword from "./components/ForgetPassword";
+import ChangePassword from "./components/ChangePassword";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 const App = () => {
   return (
@@ -20,7 +23,15 @@ const App = () => {
       <br />
       <OneMonthSilverChart /> */}
 
-      <CurrentMarketPriceOfGold/>
+      {/* <CurrentMarketPriceOfGold/> */}
+
+      <Router>
+        <Routes>
+          <Route path="/" element={<ForgetPassword/>} />
+          <Route path="/changepassword/:id/:token" element={<ChangePassword/>} />
+        </Routes>
+      </Router>
+
     </>
   );
 }

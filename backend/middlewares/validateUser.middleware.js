@@ -15,5 +15,9 @@ module.exports = validate([
 ])
 
 module.exports = validate([
+    body('password').isStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1, minSymbols: 1 }).withMessage('Password is must be above 8 letters'),
+])
+
+module.exports = validate([
     body('email').isEmail().withMessage('invalid email address'),
 ])
