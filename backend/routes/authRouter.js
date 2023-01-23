@@ -1,5 +1,5 @@
 const express = require('express');
-const { addUser, getUserById, editUser, deleteUser, login, logout, sendpasswordlink, forgotPassword, deleteAllUsers, changePassword } = require('../controllers/authController');
+const { addUser, getUserById, editUser, deleteUser, login, logout, sendpasswordlink, forgotPassword, deleteAllUsers, changePassword, loginByEmail } = require('../controllers/authController');
 const validate = require('../middlewares/validateUser.middleware');
 const {auth, authLogout, authPass} = require('../middlewares/auth.middleware');
 const router = express.Router();
@@ -14,6 +14,7 @@ router.delete('/deleteuser/:id', auth, deleteUser);
 // login routes
 router.post('/signin', validate, login);
 router.get('/logout', authLogout, logout);
+router.post('/loginbymail', validate, loginByEmail);
 
 // forget-password routes
 router.post('/sendpasswordlink', validate, sendpasswordlink);
