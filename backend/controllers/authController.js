@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
 const transporter = require('../mails/nodemailer');
+const otpGenerator = require('random-number');
 const saltRounds = 10;
 
 const deleteAllUsers = async (req, res) => {
@@ -215,8 +216,6 @@ const sendpasswordlink = async (req, res) => {
         if (userEmail) {
             const token = jwt.sign({ _id: userEmail._id }, process.env.SECRET_KEY, { expiresIn: "120s" });
             const setUserToken = await userModel.findByIdAndUpdate({ _id: userEmail._id }, { verifytoken: token }, { new: true });
-
-
             if (setUserToken) {
                 const mailOptions = {
                     from: process.env.EMAIL,
@@ -224,7 +223,6 @@ const sendpasswordlink = async (req, res) => {
                     subject: "Sending Email For password Reset",
                     text: `This Link Valid For 2 MINUTES http://localhost:3000/changepassword/${userEmail.id}/${setUserToken.verifytoken}`
                 }
-
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
                         console.log("error", error);
@@ -234,7 +232,6 @@ const sendpasswordlink = async (req, res) => {
                         res.status(201).json({ status: 201, message: "Email sent Succsfully" })
                     }
                 })
-
             }
             else {
                 res.status(200).send({
@@ -337,4 +334,65 @@ const changePassword = async (req, res) => {
     }
 }
 
-module.exports = { addUser, getUsers, getUserById, editUser, deleteUser, login, logout, sendpasswordlink, forgotPassword, deleteAllUsers, changePassword };
+const loginByEmail = async (req, res) => {
+    try {
+
+        const email = req.body.email;
+
+        const user = await userModel.findOne({ email });
+        if (!user) {
+            res.status(400).send({
+                'statusCode': 400,
+                'err': 'user not found, please try again'
+            })
+        }
+
+        const otp = otpGenerator({
+            min: 1000,
+            max: 9999,
+            integer: true
+        })
+
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: email,
+            subject: `OTP for logging in to your account ${email}`,
+            text: `Here is your otp : ${otp}`
+        }
+
+        const token = await user.generateUserToken();
+
+        if(token){
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) {
+                    res.status(400).send({
+                        'statusCode': 400,
+                        'err': 'something went wrong, please enter your email',
+                    })
+                }
+                else {
+                    res.status(200).send({
+                        'statusCode': 200,
+                        'msg': 'Otp send successfully',
+                        'data' : user,
+                        'token' : token
+                    })
+                }
+            })
+        }
+        else{
+            res.status(400).send({
+                'statusCode' : 400,
+                'msg' : 'something went wrong, please try again'
+            })
+        }
+    }
+    catch (err) {
+        res.status(400).send({
+            'statusCode': 500,
+            'err': 'Something went wrong'
+        })
+    }
+}
+
+module.exports = { addUser, getUsers, getUserById, editUser, deleteUser, login, logout, sendpasswordlink, forgotPassword, deleteAllUsers, changePassword, loginByEmail };
