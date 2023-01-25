@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const userModel = require('../models/user');
+const userModel = require('../models/user.schema');
 const transportor = require('../mails/nodemailer');
 const saltRounds = 10;
 const otpGenerator = require('random-number');

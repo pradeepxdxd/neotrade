@@ -12,6 +12,9 @@ import ForgetPassword from "./components/ForgetPassword";
 import ChangePassword from "./components/ChangePassword";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginWithEmail from "./components/LoginWithEmail";
+import Wallet from "./components/Wallet";
+import DepositAmount from "./components/DepositAmount";
+import WithdrawAmount from "./components/WithdrawAmount";
 
 const App = () => {
   return (
@@ -33,8 +36,10 @@ const App = () => {
         </Routes>
       </Router> */}
 
-      <LoginWithEmail/>
-
+      {/* <LoginWithEmail/> */}
+      <DepositAmount/>
+      <br/>
+      <WithdrawAmount/>
     </>
   );
 }

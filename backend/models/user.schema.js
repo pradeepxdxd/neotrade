@@ -35,15 +35,17 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     }],
+
     verifytoken: {
         type: String
     },
+
     walletinfo: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Wallet'
     }
 
-});
+}, { timestamps: true });
 
 userSchema.pre("save", async function (next) {
     if (this.isModified('password')) {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { sendpasswordlink } from '../services/auth';
+import { sendpasswordlink } from '../services/auth.api';
 
 export default function ForgetPassword() {
     const [email, setEmail] = useState('');

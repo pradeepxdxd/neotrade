@@ -1,7 +1,7 @@
 import React from 'react'
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { loginbymail } from '../services/auth';
+import { loginbymail } from '../services/auth.api';
 
 export default function LoginByEmail() {
     const ValidationSchema = Yup.object().shape({
