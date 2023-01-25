@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const userModel = require('../models/user.schema');
-const transporter = require('../mails/nodemailer');
-const otpGenerator = require('random-number');
+const userModel = require('../models/user');
+const transportor = require('../mails/nodemailer');
 const saltRounds = 10;
+const otpGenerator = require('random-number');
 
 const deleteAllUsers = async (req, res) => {
     try {
@@ -223,7 +223,7 @@ const sendpasswordlink = async (req, res) => {
                     subject: "Sending Email For password Reset",
                     text: `This Link Valid For 2 MINUTES http://localhost:3000/changepassword/${userEmail.id}/${setUserToken.verifytoken}`
                 }
-                transporter.sendMail(mailOptions, (error, info) => {
+                transportor.sendMail(mailOptions, (error, info) => {
                     if (error) {
                         console.log("error", error);
                         res.status(401).json({ status: 401, message: "email not send" })
@@ -336,11 +336,10 @@ const changePassword = async (req, res) => {
 
 const loginByEmail = async (req, res) => {
     try {
-
         const email = req.body.email;
-        console.log('....................', email);
+
         const user = await userModel.findOne({ email });
-        
+
         if (!user) {
             res.status(400).send({
                 'statusCode': 400,
@@ -363,8 +362,8 @@ const loginByEmail = async (req, res) => {
 
         const token = await user.generateUserToken();
 
-        if(token){
-            transporter.sendMail(mailOptions, (err, info) => {
+        if (token) {
+            transportor.sendMail(mailOptions, (err, info) => {
                 if (err) {
                     res.status(400).send({
                         'statusCode': 400,
@@ -375,18 +374,20 @@ const loginByEmail = async (req, res) => {
                     res.status(200).send({
                         'statusCode': 200,
                         'msg': 'Otp send successfully',
-                        'data' : user,
-                        'token' : token
+                        'data': user,
+                        'token': token
                     })
                 }
             })
         }
-        else{
+
+        else {
             res.status(400).send({
-                'statusCode' : 400,
-                'msg' : 'something went wrong, please try again'
+                'statusCode': 400,
+                'msg': 'something went wrong, please try again'
             })
         }
+
     }
     catch (err) {
         res.status(400).send({

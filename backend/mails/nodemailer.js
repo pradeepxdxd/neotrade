@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-const transporter = nodemailer.createTransport({
+const transportor = nodemailer.createTransport({
     service : 'gmail',
     port : 587,
     secure : false,
@@ -10,4 +10,4 @@ const transporter = nodemailer.createTransport({
     }
 })
 
-module.exports = transporter;
+module.exports = transportor;
