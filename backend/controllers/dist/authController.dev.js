@@ -4,7 +4,7 @@ var bcrypt = require('bcrypt');
 
 var jwt = require('jsonwebtoken');
 
-var userModel = require('../models/user');
+var userModel = require('../models/user.schema');
 
 var transporter = require('../mails/nodemailer');
 
@@ -665,12 +665,13 @@ var loginByEmail = function loginByEmail(req, res) {
         case 0:
           _context12.prev = 0;
           email = req.body.email;
-          _context12.next = 4;
+          console.log('....................', email);
+          _context12.next = 5;
           return regeneratorRuntime.awrap(userModel.findOne({
             email: email
           }));
 
-        case 4:
+        case 5:
           user = _context12.sent;
 
           if (!user) {
@@ -691,10 +692,10 @@ var loginByEmail = function loginByEmail(req, res) {
             subject: "OTP for logging in to your account ".concat(email),
             text: "Here is your otp : ".concat(otp)
           };
-          _context12.next = 10;
+          _context12.next = 11;
           return regeneratorRuntime.awrap(user.generateUserToken());
 
-        case 10:
+        case 11:
           token = _context12.sent;
 
           if (token) {
@@ -720,23 +721,23 @@ var loginByEmail = function loginByEmail(req, res) {
             });
           }
 
-          _context12.next = 17;
+          _context12.next = 18;
           break;
 
-        case 14:
-          _context12.prev = 14;
+        case 15:
+          _context12.prev = 15;
           _context12.t0 = _context12["catch"](0);
           res.status(400).send({
             'statusCode': 500,
             'err': 'Something went wrong'
           });
 
-        case 17:
+        case 18:
         case "end":
           return _context12.stop();
       }
     }
-  }, null, null, [[0, 14]]);
+  }, null, null, [[0, 15]]);
 };
 
 module.exports = {

@@ -11,6 +11,7 @@ import CurrentMarketPriceOfGold from "./components/CurrentMarketPriceOfGold";
 import ForgetPassword from "./components/ForgetPassword";
 import ChangePassword from "./components/ChangePassword";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginWithEmail from "./components/LoginWithEmail";
 
 const App = () => {
   return (
@@ -25,12 +26,14 @@ const App = () => {
 
       {/* <CurrentMarketPriceOfGold/> */}
 
-      <Router>
+      {/* <Router>
         <Routes>
           <Route path="/" element={<ForgetPassword/>} />
           <Route path="/changepassword/:id/:token" element={<ChangePassword/>} />
         </Routes>
-      </Router>
+      </Router> */}
+
+      <LoginWithEmail/>
 
     </>
   );

@@ -12,10 +12,12 @@ app.use(cors());
 app.use(cookieParser());
 
 // routes
-const userRoute = require('./routes/authRouter');
-const tradeapiRoute = require('./routes/trade.api.router');
+const userRoute = require('./routes/auth.routes');
+const tradeRoute = require('./routes/trade.routes');
+const walletRoute = require('./routes/wallet.routes');
 
 app.use('/api/auth', userRoute);
-app.use('/api/trade', tradeapiRoute);
+app.use('/api/trade', tradeRoute);
+app.use('/api/wallet', walletRoute)
 
 module.exports = app;

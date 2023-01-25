@@ -30,28 +30,33 @@ const userSchema = new mongoose.Schema({
         default: false
     },
     tokens: [{
-        token : {
-            type : String,
-            required : true
+        token: {
+            type: String,
+            required: true
         }
     }],
-    verifytoken : {
+    verifytoken: {
         type: String
+    },
+    walletinfo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Wallet'
     }
+
 });
 
-userSchema.pre("save", async function(next){
-    if(this.isModified('password')){
+userSchema.pre("save", async function (next) {
+    if (this.isModified('password')) {
         this.password = bcrypt.hashSync(this.password, saltRounds);
     }
     next();
 })
 
-userSchema.methods.generateUserToken = async function(){
+userSchema.methods.generateUserToken = async function () {
     try {
         const token = jwt.sign({ _id: this._id.toString() }, process.env.SECRET_KEY, { expiresIn: '2h' });
-        this.tokens = this.tokens.concat({token})
-        await this.save(); 
+        this.tokens = this.tokens.concat({ token })
+        await this.save();
         return token;
     }
     catch (err) {

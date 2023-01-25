@@ -6,8 +6,8 @@ const sendpasswordlink = (data) => {
     return axios.post(`${API}sendpasswordlink`, data);
 }
 
-const forgetPassword = () => {
-
+const loginbymail = (data) => {
+    return axios.post(`${API}loginbymail`, data);
 }
 
-export {sendpasswordlink, forgetPassword}
+export {sendpasswordlink, loginbymail}

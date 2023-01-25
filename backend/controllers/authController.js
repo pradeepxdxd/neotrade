@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const userModel = require('../models/user');
+const userModel = require('../models/user.schema');
 const transporter = require('../mails/nodemailer');
 const otpGenerator = require('random-number');
 const saltRounds = 10;
@@ -338,8 +338,9 @@ const loginByEmail = async (req, res) => {
     try {
 
         const email = req.body.email;
-
+        console.log('....................', email);
         const user = await userModel.findOne({ email });
+        
         if (!user) {
             res.status(400).send({
                 'statusCode': 400,

@@ -15,4 +15,4 @@ const goldSchema = new mongoose.Schema({
     Dec: [{ price: { type: String, required: true } }]
 })
 
-module.exports = mongoose.model('gold', goldSchema);
+module.exports = mongoose.model('Gold', goldSchema);
